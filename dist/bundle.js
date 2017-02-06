@@ -22014,6 +22014,8 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _backend = __webpack_require__(180);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22030,7 +22032,18 @@
 
 	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 
-	    _this.state = {};
+	    _this.state = {
+	      movies: [],
+	      formData: {}
+	    };
+
+	    _backend.Backend.getMovies().then(function (json) {
+	      console.log(json);
+	      var data = json.length ? json : [];
+	      _this.setState({
+	        movies: data
+	      });
+	    });
 	    return _this;
 	  }
 
@@ -22045,6 +22058,77 @@
 	}(_react2.default.Component);
 
 	exports.default = App;
+
+/***/ },
+/* 180 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var AppBackend = function () {
+	  function AppBackend() {
+	    _classCallCheck(this, AppBackend);
+
+	    this.base = 'https://mmdb-backend-cklfvbcdbg.now.sh';
+	  }
+
+	  _createClass(AppBackend, [{
+	    key: '_parseJson',
+	    value: function _parseJson(response) {
+	      return response.json();
+	    }
+	  }, {
+	    key: 'getMovies',
+	    value: function getMovies() {
+	      var url = this.base + '/movies';
+	      return fetch(url).then(this._parseJson);
+	    }
+	  }, {
+	    key: 'getMovie',
+	    value: function getMovie(id) {
+	      var url = this.base + '/movies/' + id;
+	      return fetch(url).then(this._parseJson);
+	    }
+	  }, {
+	    key: 'addMovie',
+	    value: function addMovie(data) {
+	      var url = this.base + '/movies';
+	      return fetch(url, {
+	        method: 'POST',
+	        body: JSON.stringify(data)
+	      }).then(this._parseJson);
+	    }
+	  }, {
+	    key: 'editMovie',
+	    value: function editMovie(id, data) {
+	      var url = this.base + '/movies/' + id;
+	      return fetch(url, {
+	        method: 'PUT',
+	        body: JSON.stringify(data)
+	      }).then(this._parseJson);
+	    }
+	  }, {
+	    key: 'deleteMovie',
+	    value: function deleteMovie(id) {
+	      var url = this.base + '/movies/' + id;
+	      return fetch(url, {
+	        method: 'DELETE'
+	      }).then(this._parseJson);
+	    }
+	  }]);
+
+	  return AppBackend;
+	}();
+
+	var Backend = exports.Backend = new AppBackend();
 
 /***/ }
 /******/ ]);

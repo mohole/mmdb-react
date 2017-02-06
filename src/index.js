@@ -1,5 +1,6 @@
 'use strict';
 
+import 'whatwg-fetch';
 import React from 'react';
 import { render } from 'react-dom';
 import App from './components/app';

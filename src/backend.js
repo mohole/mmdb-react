@@ -2,7 +2,7 @@
 
 class AppBackend {
   constructor(){
-    this.base = 'https://mmdb-backend-cklfvbcdbg.now.sh';
+    this.base = 'https://mmdb-backend.now.sh/';
   }
 
   _parseJson(response){

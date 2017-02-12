@@ -22077,7 +22077,7 @@
 	  function AppBackend() {
 	    _classCallCheck(this, AppBackend);
 
-	    this.base = 'https://mmdb-backend-cklfvbcdbg.now.sh';
+	    this.base = 'https://mmdb-backend.now.sh';
 	  }
 
 	  _createClass(AppBackend, [{

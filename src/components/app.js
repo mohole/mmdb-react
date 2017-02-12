@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import Movie from './movie';
 import {Backend} from './../backend';
 
 export default class App extends React.Component {
@@ -24,7 +25,9 @@ export default class App extends React.Component {
   render(){
     return (
       <section className="row">
-
+        { this.state.movies.map((e,i) => {
+            return <Movie key={i} />;
+        }) }
       </section>
     )
   }

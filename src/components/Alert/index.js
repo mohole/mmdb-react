@@ -6,12 +6,12 @@ const Alert = (props) => {
   const visibility = props.visible ? 
     [styles.alert, styles.visible] : [styles.alert];
 
-  const clicked = () => props.clicked();
+  const clickHandler = () => props.dismiss();
 
   return (
     <section 
       className={visibility.join(' ')}
-      onClick={clicked}
+      onClick={clickHandler}
     >
       <p>{message}</p>
     </section>

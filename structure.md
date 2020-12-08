@@ -5,8 +5,22 @@ A generic user can:
 * see and browse a data list of movies
 * delete an entry
 * create a new entry
-* view details of a single movie
-* edit detaigls of a single movie
+* view and edit details of a single movie
+
+### Basic architecture
+```
+    Frontend (Browser)
+        |       |
+        |       |
+------- REST API ---------
+        |       |
+        |       |
+    Backend (Node.js)
+            |
+            |
+    Persistence layer (file system)
+    
+```
 
 ### Technical checklist
 * backend integration is provided through REST API

@@ -1,42 +1,57 @@
-import { useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  useLocation
 } from "react-router-dom";
+
+import { INIT_STATE, reducer } from './utils/state';
 
 import { Alert } from './components/Alert';
 import { Home } from './components/Home';
 import { Add } from './components/Add';
+import { View } from './components/View';
 
 import 'normalize.css';
 import './App.css';
 
 function App() {
-  const [showAlert, setShowAlert] = useState(false);
+  // const [showAlert, setShowAlert] = useState(false);
+  // const hideAlert = () => setShowAlert(false);
 
-  const hideAlert = () => setShowAlert(false);
+  const [state, dispatch] = useReducer(reducer, INIT_STATE);
+  const location = useLocation();
+
+  const hideAlert = () => dispatch({ type: 'hide-alert' });
+  const updateData = (data) => dispatch({
+    type: 'data-ready',
+    payload: data
+  });
+
+  useEffect(() => {
+    dispatch({ type: 'clear-current' });
+  }, [location]);
 
   return (
     <div className="App">
-      <Alert visible={showAlert} clicked={hideAlert} />
+      <Alert visible={state.alert.visible} dismiss={hideAlert} />
 
-      <Router>
-        <Link to="/">
-          <h1>Mohole Movie Database</h1>
-        </Link>
+      <Link to="/">
+        <h1>Mohole Movie Database</h1>
+      </Link>
 
-        <Switch>
-          <Route path="/add">
-            <Add />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
-        
-      </Router>
+      <Switch>
+        <Route path="/add">
+          <Add />
+        </Route>
+        <Route path="/view/:id">
+          <View />
+        </Route>
+        <Route path="/">
+          <Home items={state.filters} dataReady={updateData} />
+        </Route>
+      </Switch>
 
     </div>
   );

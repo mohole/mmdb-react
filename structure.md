@@ -19,13 +19,13 @@ A generic user can:
             |
             |
     Persistence layer (file system)
-    
+
 ```
 
 ### Technical checklist
 * backend integration is provided through REST API
 * UI is a SPA (Single Page Application)
-* good Lighthouse scoring (over 90%)
+* good Lighthouse scoring (over 90% in production)
 
 ### Routing structure
 ```
@@ -39,9 +39,8 @@ A generic user can:
 ```
 
 ### Required libraries
-* React
-* Redux?
-* SASS
+* React (Hooks, Context)
+* SASS & CSS Modules
 * react-router-dom
 * normalize.css
 

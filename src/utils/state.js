@@ -1,3 +1,7 @@
+import React from 'react';
+
+const AppContext = React.createContext();
+
 const INIT_STATE = {
   alert: {
     visible: false,
@@ -22,6 +26,8 @@ const reducer = (state, action) => {
       return newData;
     case 'clear-current':
       return Object.assign({}, state, { current: undefined });
+    case 'update-current':
+      return Object.assign({}, state, { current: action.payload });
     default:
       return state;
   }
@@ -29,5 +35,6 @@ const reducer = (state, action) => {
 
 export {
   INIT_STATE,
-  reducer
+  reducer,
+  AppContext
 }

@@ -6,7 +6,7 @@ import {
   useLocation
 } from "react-router-dom";
 
-import { INIT_STATE, reducer } from './utils/state';
+import { INIT_STATE, reducer, AppContext } from './utils/state';
 
 import { Alert } from './components/Alert';
 import { Home } from './components/Home';
@@ -30,30 +30,32 @@ function App() {
   });
 
   useEffect(() => {
-    dispatch({ type: 'clear-current' });
+    // dispatch({ type: 'clear-current' });
   }, [location]);
 
   return (
-    <div className="App">
-      <Alert visible={state.alert.visible} dismiss={hideAlert} />
+    <AppContext.Provider value={{state, dispatch}}>
+      <div className="App">
+        <Alert visible={state.alert.visible} dismiss={hideAlert} />
 
-      <Link to="/">
-        <h1>Mohole Movie Database</h1>
-      </Link>
+        <Link to="/">
+          <h1>Mohole Movie Database</h1>
+        </Link>
 
-      <Switch>
-        <Route path="/add">
-          <Add />
-        </Route>
-        <Route path="/view/:id">
-          <View />
-        </Route>
-        <Route path="/">
-          <Home items={state.filters} dataReady={updateData} />
-        </Route>
-      </Switch>
+        <Switch>
+          <Route path="/add">
+            <Add />
+          </Route>
+          <Route path="/view/:id">
+            <View />
+          </Route>
+          <Route path="/">
+            <Home items={state.filters} dataReady={updateData} />
+          </Route>
+        </Switch>
 
-    </div>
+      </div>
+    </AppContext.Provider>
   );
 }
 

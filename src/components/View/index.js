@@ -1,10 +1,18 @@
 
+import { useContext, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { BASE_URL, getData } from './../../utils/api';
+import { AppContext } from './../../utils/state';
 
 const View = (props) => {
+  const { dispatch } = useContext(AppContext);
   const { id } = useParams();
+
+  useEffect(() => {
+    dispatch({ type: 'update-current', payload: id });
+  }, []);
+
   const dataReady = props.dataReady || function () {
     console.warn('MMDB: no dataReady callback has been passed to the <View /> component!')
   };

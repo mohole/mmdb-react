@@ -4,6 +4,11 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { debugContextDevtool } from 'react-context-devtool';
+
+const container = document.getElementById('root');
+
+debugContextDevtool(container);
 
 ReactDOM.render(
   <React.StrictMode>
@@ -11,7 +16,7 @@ ReactDOM.render(
       <App />
     </Router>
   </React.StrictMode>,
-  document.getElementById('root')
+  container
 );
 
 // If you want to start measuring performance in your app, pass a function

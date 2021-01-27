@@ -1,39 +1,50 @@
-
+// import { useState, useEffect } from 'react';           | useState() version
+import { useEffect, useContext } from 'react';
 import { Link } from "react-router-dom";
 
+import { Card } from './../Card';
 import { BASE_URL, getData } from './../../utils/api';
+import { AppContext } from './../../utils/state';
+
+import styles from './styles.module.scss';
 
 const Home = (props) => {
-  const items = props.items || [];
-  const dataReady = props.dataReady || function () {
-    console.warn('MMDB: no dataReady callback has been passed to the <Home /> component!')
-  };
+  //const [items, setItems] = useState([]);               | useState() version
+  const { state, dispatch } = useContext(AppContext);     // Get state and dispatch() from global context
 
-  if (!items.length) {
+  useEffect(() => {
     getData(`${BASE_URL}/movies`)
-      .then((data) => dataReady(data) );
-  }
+      //.then((data) => setItems(data));                  | useState() version
+      .then((data) => dispatch({
+        type: 'data-ready',
+        payload: data
+      }));
+  }, [dispatch]);
 
-  const list = () => items.map((item, i) => {
+  const list = () => state.data.map((item, i) => {
     const path = `/view/${item.id}`;
+    const edit = `/edit/${item.id}`;
 
     return (
-      <Link to={path} key={item.id}>
-        <li key={item.id}>{item.title}</li>
-      </Link>
+      <li key={item.id} >
+        <Card title={item.title} link={path} image={item.poster} edit={edit} />
+      </li>
     );
   });
 
   return (
     <section>
-      <h3>home</h3>
-      <ul>
+      <Link to="/add">
+        <a className="btn btn-primary" href="/add" role="button">
+          Add new movie to the database
+        </a>
+      </Link>
+      <h3>List of movies</h3>
+      <ul className={styles.movieList}>
         {list()}
       </ul>
     </section>
   )
 }
 
-export {
-  Home
-}
+export default Home;

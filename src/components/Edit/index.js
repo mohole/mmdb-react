@@ -1,58 +1,51 @@
 
-import { useReducer, useContext } from 'react';
-import { useHistory, Link } from "react-router-dom";
 
-import { BASE_URL } from './../../utils/api';
+import { useEffect, useState, useContext } from 'react';
+import { useParams, Link, useHistory } from 'react-router-dom';
+
+import { BASE_URL, getData } from './../../utils/api';
 import { AppContext } from './../../utils/state';
 
-// Local reducer
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'update-title':
-      return { ...state, title: action.payload };
-    case 'update-year':
-      const year = parseInt(action.payload);
-      return { ...state, year };
-    case 'update-poster':
-      return { ...state, poster: action.payload };
-    case 'update-description':
-      return { ...state, description: action.payload };
-    default:
-      return state;
+const Edit = () => {
+  const state = {
+    title: '',
+    poster: '',
+    year: 0,
+    description: ''
   }
-}
 
-const Add = () => {
   const { dispatch } = useContext(AppContext);  // Get dispatch() from global context
   const year = new Date().getFullYear();        // "Calculate" current year
   const history = useHistory();                 // Force routing from JS code without a component
+  const { id } = useParams();                   // get the "id" paramter from the routing
+  const [movie, setMovie] = useState(state);
 
-  // Local state
-  const formState = {
-    title: '',
-    poster: '',
-    description: '',
-    year
-  }
+  useEffect(() => {
+    getData(`${BASE_URL}/movies/${id}`)
+      .then((data) => setMovie(data));
+  }, [id]);
 
-  const [state, dispacth] = useReducer(reducer, formState);
-
+  // Same as the "Add" form, but handled with useState instead of useReducer
   const changeHandler = (event) => {
     const value = event.target.value;
 
     // Switch case is similar to multiple IFs
     switch (event.target.name) {
       case 'title':
-        dispacth({ type: 'update-title', payload: value });
+        const updateTitle = { ...movie, title: value }
+        setMovie(updateTitle);
         break;
       case 'year':
-        dispacth({ type: 'update-year', payload: value });
+        const updateYear = {...movie, year: parseInt(value)}
+        setMovie(updateYear);
         break;
       case 'poster':
-        dispacth({ type: 'update-poster', payload: value });
+        const updatePoster = { ...movie, poster: value }
+        setMovie(updatePoster);
         break;
       case 'description':
-        dispacth({ type: 'update-description', payload: value });
+        const updateDescr = { ...movie, description: value }
+        setMovie(updateDescr);
         break;
       default:
         break;
@@ -63,18 +56,37 @@ const Add = () => {
     event.preventDefault();
 
     // POST data to the backend
-    fetch(`${BASE_URL}/movies`, {
-      method: 'POST',
+    fetch(`${BASE_URL}/movies/${id}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(state)
+      body: JSON.stringify(movie)
+    })
+      .then((response) => response.json())
+      // If success, nothing happens, just a console.log
+      .then((data) => {
+        console.log(data);
+      })
+      // If fetch fails, display a message through the global alert component
+      .catch((err) => {
+        dispatch({
+          type: 'show-alert',
+          payload: 'There was an error... check the console'
+        });
+        console.error(err);
+      });
+  }
+
+  const deleteHandler = () =>{
+    // DELETE an entry from the backend
+    fetch(`${BASE_URL}/movies/${id}`, {
+      method: 'DELETE',
     })
       .then((response) => response.json())
       // If success navigate back to home page
       .then((data) => {
         console.log(data);
-        
         history.push('/');
       })
       // If fetch fails, display a message through the global alert component
@@ -89,7 +101,7 @@ const Add = () => {
 
   return (
     <section>
-      <h3>Add a new movie</h3>
+      <h3>Edit or delete movie</h3>
       <form onSubmit={submitHandler}>
         <div className="mb-3">
           <label htmlFor="title" className="form-label">Movie title</label>
@@ -98,7 +110,7 @@ const Add = () => {
             className="form-control"
             name="title"
             placeholder="ex: Into the wild"
-            value={state.title}
+            value={movie.title}
             onChange={changeHandler}
             required
           />
@@ -110,7 +122,7 @@ const Add = () => {
             min="1800" max={year} step="1"
             className="form-control"
             name="year"
-            value={state.year}
+            value={movie.year}
             onChange={changeHandler}
             required
           />
@@ -122,7 +134,7 @@ const Add = () => {
             placeholder="ex: https://www.domain.com/image.jpg"
             className="form-control"
             name="poster"
-            value={state.poster}
+            value={movie.poster}
             onChange={changeHandler}
             required
           />
@@ -130,7 +142,7 @@ const Add = () => {
         <div className="mb-3">
           <label htmlFor="description" className="form-label">Link to poster image</label>
           <textarea className="form-control" name="description"
-            value={state.description}
+            value={movie.description}
             onChange={changeHandler}
             required
           />
@@ -138,18 +150,21 @@ const Add = () => {
         <div className="mb-3">
           <div className="btn-group" role="group" aria-label="Form actions">
             <button className="btn btn-primary">
-              Create new entry
+              Edit Movie
             </button>
             <Link to="/">
               <button type="button" className="btn btn-outline-primary">
                 Go back to main page
               </button>
             </Link>
+            <button className="btn btn-danger" onClick={deleteHandler}>
+              Delete Movie
+            </button>
           </div>
         </div>
       </form>
     </section>
-  )
+  );
 }
 
-export default Add;
+export default Edit;

@@ -1,35 +1,51 @@
 
-import { useContext, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 
 import { BASE_URL, getData } from './../../utils/api';
-import { AppContext } from './../../utils/state';
 
-const View = (props) => {
-  const { dispatch } = useContext(AppContext);
-  const { id } = useParams();
+import styles from './styles.module.scss';
 
-  useEffect(() => {
-    dispatch({ type: 'update-current', payload: id });
-  }, []);
-
-  const dataReady = props.dataReady || function () {
-    console.warn('MMDB: no dataReady callback has been passed to the <View /> component!')
-  };
-
-  if (!props.item) {
-    getData(`${BASE_URL}/movies/${id}`)
-      .then((data) => dataReady(data));
+const View = () => {
+  const state = {
+    title: '',
+    poster: '',
+    year: 0,
+    description: ''
   }
 
+  const [movie, setMovie] = useState(state);
+  // get the "id" paramter from the routing
+  const { id } = useParams();                 
+
+  useEffect(() => {
+    getData(`${BASE_URL}/movies/${id}`)
+      .then((data) => setMovie(data));
+  }, [id]);
+
+
   return (
-    <section>
-      <h3>View</h3>
-      <p>Viewing element with id {id}</p>
+    <section className={styles.movieDetails}>
+      <h3>{movie.title}</h3>
+      <div className="row">
+        <div className="col-sm-4">
+          <img src={movie.poster} alt={movie.title} />
+        </div>
+        <div className="col-sm-8">
+          <p><strong>Year:</strong> {movie.year}</p>
+          <h4>Description</h4>
+          <p>{movie.description}</p>
+        </div>
+        <div className="col-sm-12">
+          <Link to="/">
+            <button type="button" className="btn btn-outline-primary">
+              Go back to main page
+            </button>
+          </Link>
+        </div>
+      </div>
     </section>
   )
 }
 
-export {
-  View
-}
+export default View;

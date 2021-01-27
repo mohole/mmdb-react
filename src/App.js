@@ -1,58 +1,46 @@
-import { useEffect, useReducer } from 'react';
-import {
-  Switch,
-  Route,
-  Link,
-  useLocation
-} from "react-router-dom";
+import { useReducer, Suspense, lazy } from 'react';
+import { Switch, Route, Link } from "react-router-dom";
 
 import { INIT_STATE, reducer, AppContext } from './utils/state';
 
 import { Alert } from './components/Alert';
-import { Home } from './components/Home';
-import { Add } from './components/Add';
-import { View } from './components/View';
 
 import 'normalize.css';
 import './App.css';
 
-function App() {
-  // const [showAlert, setShowAlert] = useState(false);
-  // const hideAlert = () => setShowAlert(false);
+// "Loading in progress" component
+const Loading = () => <div>Loading...</div>;
+// Lazy loading wrapper componnents for page components
+const LazyHome = lazy(() => import('./components/Home'));
+const LazyView = lazy(() => import('./components/View'));
+const LazyAdd = lazy(() => import('./components/Add'));
+const LazyEdit = lazy(() => import('./components/Edit'));
 
+function App() {
   const [state, dispatch] = useReducer(reducer, INIT_STATE);
-  const location = useLocation();
 
   const hideAlert = () => dispatch({ type: 'hide-alert' });
-  const updateData = (data) => dispatch({
-    type: 'data-ready',
-    payload: data
-  });
-
-  useEffect(() => {
-    // dispatch({ type: 'clear-current' });
-  }, [location]);
 
   return (
     <AppContext.Provider value={{state, dispatch}}>
-      <div className="App">
-        <Alert visible={state.alert.visible} dismiss={hideAlert} />
+      <div className="App container">
+        <Alert visible={state.alert.visible} 
+          message={state.alert.message} 
+          dismiss={hideAlert} 
+        />
 
         <Link to="/">
           <h1>Mohole Movie Database</h1>
         </Link>
 
-        <Switch>
-          <Route path="/add">
-            <Add />
-          </Route>
-          <Route path="/view/:id">
-            <View />
-          </Route>
-          <Route path="/">
-            <Home items={state.filters} dataReady={updateData} />
-          </Route>
-        </Switch>
+        <Suspense fallback={<Loading />}>
+          <Switch>
+            <Route path="/add" component={LazyAdd} />
+            <Route path="/view/:id" component={LazyView} />
+            <Route path="/edit/:id" component={LazyEdit} />
+            <Route exact path="/" component={LazyHome} />
+          </Switch>
+        </Suspense>
 
       </div>
     </AppContext.Provider>

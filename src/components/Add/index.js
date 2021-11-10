@@ -1,6 +1,6 @@
 
 import { useReducer, useContext } from 'react';
-import { useHistory, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import { BASE_URL } from './../../utils/api';
 import { AppContext } from './../../utils/state';
@@ -25,7 +25,7 @@ const reducer = (state, action) => {
 const Add = () => {
   const { dispatch } = useContext(AppContext);  // Get dispatch() from global context
   const year = new Date().getFullYear();        // "Calculate" current year
-  const history = useHistory();                 // Force routing from JS code without a component
+  const history = useNavigate();                 // Force routing from JS code without a component
 
   // Local state
   const formState = {

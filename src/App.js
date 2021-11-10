@@ -1,5 +1,5 @@
 import { useReducer, Suspense, lazy } from 'react';
-import { Switch, Route, Link } from "react-router-dom";
+import { Routes , Route, Link } from "react-router-dom";
 
 import { INIT_STATE, reducer, AppContext } from './utils/state';
 
@@ -34,12 +34,12 @@ function App() {
         </Link>
 
         <Suspense fallback={<Loading />}>
-          <Switch>
+          <Routes>
             <Route path="/add" component={LazyAdd} />
             <Route path="/view/:id" component={LazyView} />
             <Route path="/edit/:id" component={LazyEdit} />
             <Route exact path="/" component={LazyHome} />
-          </Switch>
+          </Routes>
         </Suspense>
 
       </div>

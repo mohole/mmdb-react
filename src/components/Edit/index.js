@@ -1,7 +1,7 @@
 
 
 import { useEffect, useState, useContext } from 'react';
-import { useParams, Link, useHistory } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 
 import { BASE_URL, getData } from './../../utils/api';
 import { AppContext } from './../../utils/state';
@@ -16,7 +16,7 @@ const Edit = () => {
 
   const { dispatch } = useContext(AppContext);  // Get dispatch() from global context
   const year = new Date().getFullYear();        // "Calculate" current year
-  const history = useHistory();                 // Force routing from JS code without a component
+  const history = useNavigate();                 // Force routing from JS code without a component
   const { id } = useParams();                   // get the "id" paramter from the routing
   const [movie, setMovie] = useState(state);
 
